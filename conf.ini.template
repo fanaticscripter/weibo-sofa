@@ -1,0 +1,23 @@
+# DO NOT QUOTE VALUES
+
+[app]
+# A valid Weibo API access token; you can easily generate one at
+# http://open.weibo.com/tools/apitest.php without doing full blown OAuth
+access_token =
+
+[comment]
+# Maximum delay of comment since a status is posted, in seconds; beyond
+# this, comment won't be posted even if a previously unknown status is
+# found; defaults to 60
+max_delay = 60
+
+# Text of comment to post
+text = 沙发
+
+[scraper]
+# weibo.com cookies, grabbed from browser so as to download weibo.com
+# pages rather than being redirected to the login screen
+cookies =
+
+# Polling interval of the scraper, in seconds; defaults to 1
+polling_interval = 1
