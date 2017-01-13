@@ -2,7 +2,6 @@
 
 import http.cookies
 import re
-import sys
 import time
 
 import arrow
@@ -43,8 +42,10 @@ def fetch(uid):
     except Exception:
         logger.warning('Connection failed, retrying in 5...')
         time.sleep(5)
+        return None
     if resp.status_code != 200:
         logger.warning(f'Got HTTP {resp.status_code}')
+        return None
     return resp.text
 
 # Returns a list of quadruplets of three ints and a str:
@@ -66,10 +67,14 @@ def parse(html):
 # or None if no original status is found.
 def latest_status(uid):
     uid = int(uid)
-    statuses = parse(fetch(uid))
+    html = fetch(uid)
+    if html is None:
+        return None
+    statuses = parse(html)
     try:
         return next(filter(lambda s: s[0] == uid, statuses))[1:]
     except StopIteration:
         logger.warning('No original status found')
+        return None
 
 load_cookie(ws.conf.cookies)
