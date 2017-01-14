@@ -7,7 +7,6 @@ import time
 
 import arrow
 
-
 TZ = 'Asia/Shanghai'
 
 def sigint_handler(signal, frame):
@@ -15,6 +14,11 @@ def sigint_handler(signal, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, sigint_handler)
+
+def timestamp2print(timestamp, timefmt=None):
+    if timefmt is None:
+        timefmt = '%Y-%m-%dT%H:%M:%S%z'
+    return arrow.get(timestamp).to(TZ).strftime(timefmt)
 
 def main():
     parser = argparse.ArgumentParser(description='Grab target user\'s Weibo sofas.')
@@ -50,25 +54,18 @@ def main():
 
         new = ws.db.insert_status(uid, sid, timestamp, url)
         if new:
-            timestamp_now = int(time.time())
-            print(
-                arrow.get(timestamp_now).to(TZ),
-                uid,
-                sid,
-                arrow.get(timestamp).to(TZ),
-                url,
-            )
+            now = timestamp2print(time.time())
+            posting_time = timestamp2print(timestamp)
+            print(f'{now}: {uid} {sid} {posting_time} {url}')
+
             # Do not post the comment if we're already too late to the
             # party
-            if timestamp_now - timestamp > max_delay:
+            if time.time() - timestamp > max_delay:
                 continue
             successful = ws.comment.post_comment(sid)
             if successful:
-                timestamp_now = int(time.time())
-                print(
-                    arrow.get(timestamp_now).to(TZ),
-                    f'posted comment to {url}',
-                )
+                now = timestamp2print(time.time())
+                print(f'{now}: posted comment to {url}')
 
 if __name__ == '__main__':
     main()
