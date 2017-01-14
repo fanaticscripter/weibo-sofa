@@ -12,7 +12,7 @@ git clone https://github.com/fanaticscripter/weibo-sofa.git
 
 Copy `conf.ini.template` to `conf.ini`, then fill out the values. You will need
 
-- weibo.com cookies in order to download pages (grab them from browser after signing in);
+- weibo.com cookies in order to download pages (grab them from browser after signing in) — only required if you use the primary weibo.com data source, and can be omitted if you use the mobile m.weibo.cn data source (`-m, --mobile`);
 - A Weibo API access token in order to post comments (register an app at [open.weibo.com/development](http://open.weibo.com/development) then generate a token in Weibo's [API explorer](http://open.weibo.com/tools/apitest.php)).
 
 ## Usage

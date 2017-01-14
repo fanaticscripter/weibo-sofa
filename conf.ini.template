@@ -16,7 +16,8 @@ text = 沙发
 
 [scraper]
 # weibo.com cookies, grabbed from browser so as to download weibo.com
-# pages rather than being redirected to the login screen
+# pages rather than being redirected to the login screen; not required
+# if you use the mobile data source
 cookies =
 
 # Polling interval of the scraper, in seconds; defaults to 1
