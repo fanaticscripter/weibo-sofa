@@ -8,6 +8,7 @@ import arrow
 import requests
 
 import ws.conf
+import ws.utils
 from ws.logger import logger
 
 # 1st group: original user id pattern
@@ -44,7 +45,8 @@ def fetch(uid):
         time.sleep(5)
         return None
     if resp.status_code != 200:
-        logger.warning(f'Got HTTP {resp.status_code}')
+        dumppath = ws.utils.dump(resp.text)
+        logger.warning(f'Got HTTP {resp.status_code}; response dumped into {dumppath}')
         return None
     return resp.text
 
@@ -74,7 +76,8 @@ def latest_status(uid):
     try:
         return next(filter(lambda s: s[0] == uid, statuses))[1:]
     except StopIteration:
-        logger.warning('No original status found')
+        dumppath = ws.utils.dump(html)
+        logger.warning(f'No original status found; response dumped into {dumppath}')
         return None
 
 load_cookie(ws.conf.cookies)

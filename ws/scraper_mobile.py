@@ -16,6 +16,7 @@ import dateutil
 import requests
 
 import ws.conf
+import ws.utils
 from ws.logger import logger
 
 TZ = 'Asia/Shanghai'
@@ -38,7 +39,8 @@ def fetch(uid):
         time.sleep(5)
         return None
     if resp.status_code != 200:
-        logger.warning(f'Got HTTP {resp.status_code}')
+        dumppath = ws.utils.dump(resp.text)
+        logger.warning(f'Got HTTP {resp.status_code}; response dumped into {dumppath}')
         return None
     try:
         return resp.json()
@@ -85,7 +87,8 @@ def parse(response):
 
             statuses.append((ouid, sid, timestamp, url))
     except Exception:
-        logger.warning('Invalid response')
+        dumppath = ws.utils.dumpjson(response)
+        logger.warning(f'Invalid response; response object dumped into {dumppath}')
         raise
         return []
 
@@ -103,5 +106,6 @@ def latest_status(uid):
     try:
         return next(filter(lambda s: s[0] == uid, statuses))[1:]
     except StopIteration:
-        logger.warning('No original status found')
+        dumppath = ws.utils.dumpjson(response)
+        logger.warning(f'No original status found; response object dumped into {dumppath}')
         return None
