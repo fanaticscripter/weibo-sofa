@@ -1,12 +1,22 @@
 # weibo-sofa
 
+![Supported Python Versions](https://img.shields.io/badge/python-3.6-blue.svg?maxAge=2592000)
+![License](https://img.shields.io/badge/license-WTFPL-blue.svg?maxAge=2592000)
+
 A simple and harmless tool to troll your Weibo followee, especially if they're into grabbing their own "sofa". 😉 Always be the first to respond! (Well, not guaranteed, but we try our best.)
 
 ## Installation
 
+Python 3.6 or later is required due to usage of [f-strings](https://docs.python.org/3.6/whatsnew/3.6.html#whatsnew36-pep498). With a suitable Python installed:
+
 ```
 git clone https://github.com/fanaticscripter/weibo-sofa.git
+cd weibo-sofa
+pip install -r requirements.txt
+./sofa --help
 ```
+
+Installation within a venv is highly recommended.
 
 ## Configuration
 
