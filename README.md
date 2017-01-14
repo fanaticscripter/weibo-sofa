@@ -45,7 +45,7 @@ Sample session:
 
 Weibo's API does not allow access to user timeline and statuses unless the target user has authorized your app. This is annoying but understandable: data is what they sell, so they don't give it up for free. Being understandable doesn't help with problem solving though, and there's really nothing immoral about automating access to a tiny, tiny slice of proprietary yet public (or at least visible to you) information for lolz, so we just scrape weibo.com's web pages to get the job done.
 
-Yet web scraping code is inherently brittle, especially for pages as bad as weibo.com's — at the moment they frigging serve raw HTML content in escaped Javascript strings (!!!) on their desktop site, and user pages on their mobile site m.weibo.cn are nothing more than a dummy container plus generic JS code (I probably should look into their AJAX calls). Therefore, don't be surprised if my regex-based scraper breaks at any moment. Rest assured that when it breaks it will be very noisy about it.
+Yet web scraping code is inherently brittle<s>, especially for pages as bad as weibo.com's — at the moment they frigging serve raw HTML content in escaped Javascript strings (!!!) on their desktop site, and user pages on their mobile site m.weibo.cn are nothing more than a dummy container plus generic JS code (I probably should look into their AJAX calls)</s>. (**Update**: I have added an alternative scraper utilizing m.weibo.cn's structured data source — available under the `-m, --mobile` option — which doesn't require cookies, provides huge transfer size savings, and is hopefully more resilient to random changes by Sina's shitty programmers; there's one drawback: the posting time granularity there is limited to one minute.) Therefore, don't be surprised if my <s>regex-based</s> scraper breaks at any moment. Rest assured that when it breaks it will be very noisy about it.
 
 So, we talked about scraping weibo.com for data. We do it very often, every 1 second by default (configurable), if your connection to weibo.com can keep up with it — requests are serialized. The rest is obvious: if we detect a new status, we immediately post the pre-configured comment to it. Note that we don't post a comment if the status has been out for a while already, because it would be a shame if you claim to be the sofa occupier when you actually aren't; the default tolerable delay is 1 minute (again configurable).
 
@@ -53,8 +53,8 @@ I'd recommend running `sofa` on a server or desktop (anything constantly on and 
 
 ## Roadmap
 
+- Make `scraper_mobile` the default after it's been running for a while and doesn't seem to have major problems (e.g., being blocked after a while).
 - Add optional OAuth flow to generate token from appid and secret.
-- Look into AJAX calls on http://m.weibo.cn/u/5230466807 to see if we can have a more realiable way of scraping (why didn't I think of this in the first place?).
 
 ## License
 

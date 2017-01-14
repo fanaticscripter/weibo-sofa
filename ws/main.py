@@ -22,9 +22,15 @@ def timestamp2print(timestamp, timefmt=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Grab target user\'s Weibo sofas.')
+    parser.add_argument('-m', '--mobile', action='store_true',
+                        help='''scrape mobile site m.weibo.cn instead of
+                        weibo.com (does not require cookies, provides
+                        huge transfer size savings, but status posting
+                        time granularity is limited to one minute)''')
     parser.add_argument('uid', type=int, help='user id of the target user')
     args = parser.parse_args()
     uid = args.uid
+    mobile = args.mobile
 
     # Import local modules after parsing arguments so as to not fail
     # with missing conf when user is simply trying to read the help
@@ -32,10 +38,20 @@ def main():
     import ws.comment
     import ws.conf
     import ws.db
-    import ws.scraper
+
+    if mobile:
+        import ws.scraper_mobile as scraper
+    else:
+        import ws.scraper as scraper
 
     polling_interval = ws.conf.polling_interval
     max_delay = ws.conf.max_delay
+    # There's an uncertainty of 60 seconds in posting time obtained from
+    # the mobile site data source; we have to add this to the max delay.
+    if mobile:
+        max_delay += 60
+
+    posting_time_fmt = '%Y-%m-%dT%H:%M%z' if mobile else None
 
     starting_time = 0
     while True:
@@ -47,7 +63,7 @@ def main():
 
         starting_time = time.time()
         try:
-            sid, timestamp, url = ws.scraper.latest_status(uid)
+            sid, timestamp, url = scraper.latest_status(uid)
         except TypeError:
             # Got None
             continue
@@ -55,7 +71,7 @@ def main():
         new = ws.db.insert_status(uid, sid, timestamp, url)
         if new:
             now = timestamp2print(time.time())
-            posting_time = timestamp2print(timestamp)
+            posting_time = timestamp2print(timestamp, timefmt=posting_time_fmt)
             print(f'{now}: {uid} {sid} {posting_time} {url}')
 
             # Do not post the comment if we're already too late to the
