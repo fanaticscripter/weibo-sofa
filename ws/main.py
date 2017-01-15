@@ -24,9 +24,10 @@ def main():
     parser = argparse.ArgumentParser(description='Grab target user\'s Weibo sofas.')
     parser.add_argument('-m', '--mobile', action='store_true',
                         help='''scrape mobile site m.weibo.cn instead of
-                        weibo.com (does not require cookies, provides
-                        huge transfer size savings, but status posting
-                        time granularity is limited to one minute)''')
+                        weibo.com (does not require cookies, provides huge
+                        transfer size savings, but you might be blocked after a
+                        while, and status posting time granularity is limited
+                        to one minute)''')
     parser.add_argument('uid', type=int, help='user id of the target user')
     args = parser.parse_args()
     uid = args.uid
