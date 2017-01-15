@@ -12,7 +12,6 @@ import re
 import time
 
 import arrow
-import dateutil
 import requests
 
 import ws.conf
@@ -50,7 +49,6 @@ def fetch(uid):
 
 def parse_datetime(d):
     year, month, day, *_ = arrow.now().to(TZ).timetuple()
-    tz = dateutil.tz.gettz(TZ)
     if d.endswith('分钟前'):
         minutes = int(d[:-3])
         t =  arrow.now().replace(minutes=-minutes)
@@ -58,11 +56,11 @@ def parse_datetime(d):
         hours = int(d[:-3])
         t = arrow.now().replace(hours=-hours)
     elif d.startswith('今天'):
-        t = arrow.get(d, 'hh:mm').replace(year=year, month=month, day=day, tzinfo=tz)
+        t = arrow.get(d, 'hh:mm', tzinfo=TZ).replace(year=year, month=month, day=day)
     elif d[2] == '-':  # not starting with a four digit year
-        t = arrow.get(d, 'MM-DD hh:mm').replace(year=year, tzinfo=tz)
+        t = arrow.get(d, 'MM-DD hh:mm', tzinfo=TZ).replace(year=year)
     else:
-        t = arrow.get(d, 'YYYY-MM-DD hh:mm').replace(tzinfo=tz)
+        t = arrow.get(d, 'YYYY-MM-DD hh:mm', tzinfo=TZ)
     return t.to(TZ).timestamp
 
 # Returns a list of quadruplets of three ints and a str:
