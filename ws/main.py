@@ -62,8 +62,9 @@ def main():
             time.sleep(sleep_length)
 
         starting_time = time.time()
+        latest = scraper.latest_status(uid)
         try:
-            sid, timestamp, url = scraper.latest_status(uid)
+            sid, timestamp, url = latest
         except TypeError:
             # Got None
             continue

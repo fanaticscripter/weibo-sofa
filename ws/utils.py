@@ -14,10 +14,10 @@ def shorten(text, count):
 
 # Dump text into a tempfile, and returns the path.
 def dump(text):
-    fd, path = tempfile.mkstemp
-    os.write(fd, text)
+    fd, path = tempfile.mkstemp()
+    os.write(fd, text.encode('utf-8'))
     os.close(fd)
     return path
 
 def dumpjson(obj):
-    dump(json.dumps(obj, indent=2, ensure_ascii=False, sort_keys=True))
+    return dump(json.dumps(obj, indent=2, ensure_ascii=False, sort_keys=True))
