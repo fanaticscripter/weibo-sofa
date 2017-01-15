@@ -67,7 +67,14 @@ def parse(html):
 # Returns a triplet of two ints and a str:
 #   (status_id, status_timestamp, url)
 # or None if no original status is found.
-def latest_status(uid):
+#
+# A warning is optionally issued when no original status is found. If
+# warn_on_consecutive is True, only issue the warning if the same has
+# happened in the last minute; this reduces unnecessary warnings when
+# weibo.com errors out internally once in a while (I sometimes get a few
+# nonsensical "她还没有发过微博" out of the thousands of responses I
+# retrieve every hour).
+def latest_status(uid, warn=True, warn_on_consecutive=True):
     uid = int(uid)
     html = fetch(uid)
     if html is None:
@@ -76,8 +83,13 @@ def latest_status(uid):
     try:
         return next(filter(lambda s: s[0] == uid, statuses))[1:]
     except StopIteration:
-        dumppath = ws.utils.dump(html)
-        logger.warning(f'No original status found; response dumped into {dumppath}')
+        time_since_last_exception = time.time() - latest_status.last_exception_timestamp
+        if warn and not (warn_on_consecutive and time_since_last_exception > 60):
+            dumppath = ws.utils.dump(html)
+            logger.warning(f'No original status found; response dumped into {dumppath}')
+        latest_status.last_exception_timestamp = time.time()
         return None
+
+latest_status.last_exception_timestamp = 0
 
 load_cookie(ws.conf.cookies)
