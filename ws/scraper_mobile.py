@@ -34,17 +34,17 @@ def fetch(uid):
             headers={'Referer': f'http://m.weibo.com/u/{uid}'},
         )
     except Exception:
-        logger.warning('Connection failed, retrying in 5...')
+        logger.warning('connection failed, retrying in 5...')
         time.sleep(5)
         return None
     if resp.status_code != 200:
         dumppath = ws.utils.dump(resp.text)
-        logger.warning(f'Got HTTP {resp.status_code}; response dumped into {dumppath}')
+        logger.warning(f'got HTTP {resp.status_code}; response dumped into {dumppath}')
         return None
     try:
         return resp.json()
     except json.JSONDecodeError:
-        logger.warning('Response cannot be decoded as JSON')
+        logger.warning('response cannot be decoded as JSON')
         return None
 
 def parse_datetime(d):
@@ -86,7 +86,7 @@ def parse(response):
             statuses.append((ouid, sid, timestamp, url))
     except Exception:
         dumppath = ws.utils.dumpjson(response)
-        logger.warning(f'Invalid response; response object dumped into {dumppath}')
+        logger.warning(f'invalid response; response object dumped into {dumppath}')
         raise
         return []
 
@@ -105,5 +105,5 @@ def latest_status(uid):
         return next(filter(lambda s: s[0] == uid, statuses))[1:]
     except StopIteration:
         dumppath = ws.utils.dumpjson(response)
-        logger.warning(f'No original status found; response object dumped into {dumppath}')
+        logger.warning(f'no original status found; response object dumped into {dumppath}')
         return None

@@ -37,16 +37,16 @@ load_cookie.has_been_run = False
 
 def fetch(uid):
     if not load_cookie.has_been_run:
-        raise RuntimeError('Haven\'t provided weibo.com cookie with load_cookie')
+        raise RuntimeError('haven\'t provided weibo.com cookie with load_cookie')
     try:
         resp = SESSION.get(f'http://weibo.com/u/{uid}?is_all=1')
     except Exception:
-        logger.warning('Connection failed, retrying in 5...')
+        logger.warning('connection failed, retrying in 5...')
         time.sleep(5)
         return None
     if resp.status_code != 200:
         dumppath = ws.utils.dump(resp.text)
-        logger.warning(f'Got HTTP {resp.status_code}; response dumped into {dumppath}')
+        logger.warning(f'got HTTP {resp.status_code}; response dumped into {dumppath}')
         return None
     return resp.text
 
@@ -86,7 +86,7 @@ def latest_status(uid, warn=True, warn_on_consecutive=True):
         time_since_last_exception = time.time() - latest_status.last_exception_timestamp
         if warn and not (warn_on_consecutive and time_since_last_exception > 60):
             dumppath = ws.utils.dump(html)
-            logger.warning(f'No original status found; response dumped into {dumppath}')
+            logger.warning(f'no original status found; response dumped into {dumppath}')
         latest_status.last_exception_timestamp = time.time()
         return None
 

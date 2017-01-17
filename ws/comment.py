@@ -33,9 +33,9 @@ def post_comment(sid, text=DEFAULT_COMMENT):
     try:
         resp = SESSION.post(url)
     except Exception:
-        logger.warning('Connection failed')
+        logger.warning('connection failed')
     if resp.status_code != 200:
-        logger.warning(f'Got HTTP {resp.status_code}: {resp.text}')
+        logger.warning(f'got HTTP {resp.status_code}: {resp.text}')
         return False
     else:
         return True
