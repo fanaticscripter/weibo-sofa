@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
+import logging
 import signal
 import sys
 import time
 
 import arrow
+
+from ws.logger import logger
 
 TZ = 'Asia/Shanghai'
 
@@ -28,10 +31,14 @@ def main():
                         transfer size savings, but you might be blocked after a
                         while, and status posting time granularity is limited
                         to one minute)''')
+    parser.add_argument('-d', '--debug', action='store_true', help='print debugging info')
     parser.add_argument('uid', type=int, help='user id of the target user')
     args = parser.parse_args()
     uid = args.uid
     mobile = args.mobile
+
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
 
     # Import local modules after parsing arguments so as to not fail
     # with missing conf when user is simply trying to read the help
@@ -62,6 +69,7 @@ def main():
         if sleep_length > 0:
             time.sleep(sleep_length)
 
+        logger.debug('polling')
         starting_time = time.time()
         latest = scraper.latest_status(uid)
         try:
@@ -84,6 +92,8 @@ def main():
             if successful:
                 now = timestamp2print(time.time())
                 print(f'{now}: posted comment to {url}')
+        else:
+            logger.debug(f'seen: {sid}')
 
 if __name__ == '__main__':
     main()

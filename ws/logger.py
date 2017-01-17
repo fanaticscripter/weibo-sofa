@@ -7,4 +7,4 @@ logging.basicConfig(
     datefmt='%Y-%m-%dT%H:%M:%S%z'
 )
 
-logger = logging.getLogger()
+logger = logging.getLogger('ws')
