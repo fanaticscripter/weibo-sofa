@@ -1,9 +1,21 @@
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # weibo-sofa
 
 ![Supported Python Versions](https://img.shields.io/badge/python-3.6-blue.svg?maxAge=2592000)
 ![License](https://img.shields.io/badge/license-WTFPL-blue.svg?maxAge=2592000)
 
 A simple and harmless tool to troll your Weibo followee, especially if they're into grabbing their own "sofa". 😉 Always be the first to respond! (Well, not guaranteed, but we try our best.)
+
+# Table of contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [How it works](#how-it-works)
+- [Roadmap](#roadmap)
+- [Notes](#notes)
+- [License](#license)
 
 ## Installation
 
@@ -64,6 +76,18 @@ I'd recommend running `sofa` on a server or desktop (anything constantly on and 
 ## Roadmap
 
 - Add optional OAuth flow to generate token from appid and secret.
+
+## Notes
+
+- Including emojis is simple. Weibo automatically converts textual representations of emojis — that is, emoji names wrapped in square brackets — into emojis. For instance, comment text "沙发[二哈]" would become "沙发![[二哈]](https://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/74/moren_hashiqi_org.png)". Find out the names of emojis by inserting them with Weibo's status composer.
+
+- Including images is hard. There's no support in the API. If you manage to get ahold of a link like <http://photo.weibo.com/h5/comment/compic_id/1022:230597fc542ee08ed312f4de2d1ed5d541b430>, you could shorten it with `t.cn` (in this case, into <http://t.cn/RtCfXI1>), and include the short link in the comment text, which would be converted into an attached image automatically. An example would be "嘟嘟http://t.cn/RtCfXI1", which would be converted into "嘟嘟" with [this image](http://ww3.sinaimg.cn/bmiddle/005Hl0D7gw1f6mqksxcggj30k00k0abe.jpg) attached.
+
+  However, as far as I can tell, the only way to get ahold of a link like that is to post a comment with the desired image in the first place... And I couldn't even do that with the web interface. When I tried (on Jan 27, 2017), there was a photo button alongside the emoji button in the comment composer, but unlike the emoji button, it was grayed out. Not sure if it was a VIP-only feature or what. I did know I could accomplish that in the iOS client, but based on the shitty track records of Chinese Internet companies, I did not trust the app enough to grant it access to my photos.
+
+  That's all I can say about commenting with images. Basically, if you're dedicated enough, just post the image in a comment beforehand, grab the photo.weibo.com link, shorten it and include the URL in your comment text.
+
+  Lesson from this episode: shitty API sucks. Hardly a surprise.
 
 ## License
 
