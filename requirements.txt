@@ -1,4 +1,4 @@
 arrow
-bs4
+beautifulsoup4
 peewee
 requests
