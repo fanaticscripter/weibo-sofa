@@ -14,6 +14,9 @@ max_delay = 60
 # Text of comment to post
 text = 沙发
 
+# Text of reply to post (to OP's comment); defaults to comment.text
+reply_text = 沙发
+
 [scraper]
 # weibo.com cookies, grabbed from browser so as to download weibo.com
 # pages rather than being redirected to the login screen; not required

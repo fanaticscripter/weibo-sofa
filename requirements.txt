@@ -1,3 +1,4 @@
 arrow
+bs4
 peewee
 requests

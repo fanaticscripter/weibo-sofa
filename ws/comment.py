@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import time
-import urllib.parse
 
 import requests
 
@@ -9,6 +8,7 @@ import ws.conf
 from ws.logger import logger
 
 DEFAULT_COMMENT = ws.conf.comment_text
+DEFAULT_REPLY = ws.conf.reply_text
 ACCESS_TOKEN = ws.conf.access_token
 
 SESSION = requests.session()
@@ -27,13 +27,39 @@ SESSION.headers = {
 # sid is the status id; text is the content of the comment, defaulting
 # to comment.text in conf.ini.
 def post_comment(sid, text=DEFAULT_COMMENT):
-    quoted_text = urllib.parse.quote(text, safe='')
-    url = (f'https://api.weibo.com/2/comments/create.json?'
-           f'access_token={ACCESS_TOKEN}&comment={quoted_text}&id={sid}')
+    url = 'https://api.weibo.com/2/comments/create.json'
+    payload = {
+        'access_token': ACCESS_TOKEN,
+        'comment': text,
+        'id': sid,
+    }
     try:
-        resp = SESSION.post(url)
+        resp = SESSION.post(url, params=payload)
     except Exception:
         logger.warning('connection failed')
+        return False
+    if resp.status_code != 200:
+        logger.warning(f'got HTTP {resp.status_code}: {resp.text}')
+        return False
+    else:
+        return True
+
+# sid is the status id, cid is the comment id, text is the content of
+# the reply, default to comment.reply_text in conf.ini.
+def reply_to_comment(sid, cid, text=DEFAULT_REPLY):
+    url = 'https://api.weibo.com/2/comments/reply.json'
+    payload = {
+        'access_token': ACCESS_TOKEN,
+        'cid': cid,
+        'id': sid,
+        'comment': text,
+        'without_mention': 1,
+    }
+    try:
+        resp = SESSION.post(url, params=payload)
+    except Exception:
+        logger.warning('connection failed')
+        return False
     if resp.status_code != 200:
         logger.warning(f'got HTTP {resp.status_code}: {resp.text}')
         return False

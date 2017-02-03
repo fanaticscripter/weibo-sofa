@@ -5,6 +5,7 @@ import re
 import time
 
 import arrow
+import bs4
 import requests
 
 import ws.conf
@@ -91,5 +92,36 @@ def latest_status(uid, warn=True, warn_on_consecutive=True):
         return None
 
 latest_status.last_exception_timestamp = 0
+
+# Returns a list of triplets of ints
+#   (sid, cid, uid)
+# representing the first screenful of latest comments to the status
+# sid. cid is the comment id, and uid is the user id of the commenter.
+#
+# A None return value indicates failure.
+def status_comments(sid):
+    if not load_cookie.has_been_run:
+        raise RuntimeError('haven\'t provided weibo.com cookie with load_cookie')
+    try:
+        # 'filter' could also be 'hot' for fetching popular comments
+        resp = SESSION.get(f'http://weibo.com/aj/v6/comment/big?id={sid}&filter=all&from=singleWeiBo')
+    except Exception:
+        return None
+    if resp.status_code != 200:
+        return None
+    try:
+        soup = bs4.BeautifulSoup(resp.json()['data']['html'], 'html.parser')
+    except Exception:
+        return None
+
+    comments = []
+    for comment_node in soup.find_all(attrs={'node-type': 'root_comment'}):
+        cid = comment_node['comment_id']
+        commenter_avatar = comment_node.find('img', attrs={
+            'usercard': lambda value: value and value.startswith('id=')
+        })
+        uid = commenter_avatar['usercard'][3:]
+        comments.append((sid, cid, uid))
+    return comments
 
 load_cookie(ws.conf.cookies)
