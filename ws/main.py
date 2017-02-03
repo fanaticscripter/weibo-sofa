@@ -54,14 +54,17 @@ def main():
 
     polling_interval = ws.conf.polling_interval
     max_delay = ws.conf.max_delay
+    op_comment_max_delay = ws.conf.op_comment_max_delay
     # There's an uncertainty of 60 seconds in posting time obtained from
     # the mobile site data source; we have to add this to the max delay.
     if mobile:
         max_delay += 60
+        op_comment_max_delay += 60
 
     posting_time_fmt = '%Y-%m-%dT%H:%M%z' if mobile else None
 
     starting_time = 0
+    new_status_timestamp = 0  # Used when waiting for OP to post a comment
     while True:
         # Sleep until polling_interval seconds after the starting time
         # of the last request.
@@ -80,20 +83,43 @@ def main():
 
         new = ws.db.insert_status(uid, sid, timestamp, url)
         if new:
+            new_status_timestamp = timestamp
             now = timestamp2print(time.time())
             posting_time = timestamp2print(timestamp, timefmt=posting_time_fmt)
             print(f'{now}: {uid} {sid} {posting_time} {url}')
 
             # Do not post the comment if we're already too late to the
             # party
-            if time.time() - timestamp > max_delay:
-                continue
-            successful = ws.comment.post_comment(sid)
-            if successful:
-                now = timestamp2print(time.time())
-                print(f'{now}: posted comment to {url}')
+            if time.time() - timestamp <= max_delay:
+                successful = ws.comment.post_comment(sid)
+                if successful:
+                    now = timestamp2print(time.time())
+                    print(f'{now}: posted comment to {url}')
         else:
             logger.debug(f'seen: {sid}')
+
+        # Try to reply to OP's first comment
+        # The mobile scraper doesn't support this feature
+        if not mobile and time.time() <= new_status_timestamp + op_comment_max_delay:
+            comments = scraper.status_comments(sid)
+            if comments is None:  # Failed to extract comments
+                continue
+            # The returned comments are in reverse chronological order
+            # Find the earliest one posted by the OP and reply to it
+            for _, cid, comment_uid in reversed(comments):
+                if comment_uid == uid:
+                    break
+            else:
+                # OP hasn't commented yet (or comments pour in too fast
+                # and OP's comment already fell out of the first page)
+                continue
+
+            successful = ws.comment.reply_to_comment(sid, cid)
+            if successful:
+                now = timestamp2print(time.time())
+                print(f'{now}: posted reply to comment {cid} in {url}')
+                # Reset new status timestamp to stop checking
+                new_status_timestamp = 0
 
 if __name__ == '__main__':
     main()

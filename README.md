@@ -73,6 +73,8 @@ So, we talked about scraping weibo.com for data. We do it very often, every 1 se
 
 I'd recommend running `sofa` on a server or desktop (anything constantly on and connected, really) located in Mainland China (or anywhere where the connection to weibo.com is fast and reliable, which can't be said for my current U.S. residence), or results may be disappointing.
 
+**Update (Feb 3, 2017).** I have now added the ability to also reply to OP's first comment to her own status. Check out `comment.reply_text` and `comment.op_comment_max_delay` in `conf.ini.template` for details. This feature isn't supported by the mobile scraper, since that one is in a state of abandonment.
+
 ## Roadmap
 
 - Add optional OAuth flow to generate token from appid and secret.

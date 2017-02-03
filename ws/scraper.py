@@ -100,6 +100,7 @@ latest_status.last_exception_timestamp = 0
 #
 # A None return value indicates failure.
 def status_comments(sid):
+    sid = int(sid)
     if not load_cookie.has_been_run:
         raise RuntimeError('haven\'t provided weibo.com cookie with load_cookie')
     try:
@@ -116,11 +117,11 @@ def status_comments(sid):
 
     comments = []
     for comment_node in soup.find_all(attrs={'node-type': 'root_comment'}):
-        cid = comment_node['comment_id']
+        cid = int(comment_node['comment_id'])
         commenter_avatar = comment_node.find('img', attrs={
             'usercard': lambda value: value and value.startswith('id=')
         })
-        uid = commenter_avatar['usercard'][3:]
+        uid = int(commenter_avatar['usercard'][3:])
         comments.append((sid, cid, uid))
     return comments
 

@@ -41,6 +41,7 @@ def getkey(spec, type=None, required=True, default=None):
 
 access_token = getkey('app.access_token')
 max_delay = getkey('comment.max_delay', type=int, default=60)
+op_comment_max_delay = getkey('comment.op_comment_max_delay', type=int, default=300)
 comment_text = getkey('comment.text')
 reply_text = getkey('comment.reply_text', default=comment_text)
 cookies = getkey('scraper.cookies', required=False)

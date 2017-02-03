@@ -11,6 +11,11 @@ access_token =
 # found; defaults to 60
 max_delay = 60
 
+# Maximum time to wait for OP to post his/her first comment (to which we
+# will post a reply) after the status is posted, in seconds; beyond
+# this, we won't check the comments; defaults to 300
+op_comment_max_delay = 300
+
 # Text of comment to post
 text = 沙发
 
