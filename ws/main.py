@@ -31,11 +31,13 @@ def main():
                         transfer size savings, but you might be blocked after a
                         while, and status posting time granularity is limited
                         to one minute)''')
+    parser.add_argument('--mercy', action='store_true', help='leave sofa to the target user')
     parser.add_argument('-d', '--debug', action='store_true', help='print debugging info')
     parser.add_argument('uid', type=int, help='user id of the target user')
     args = parser.parse_args()
     uid = args.uid
     mobile = args.mobile
+    mercy = args.mercy
 
     if args.debug:
         logger.setLevel(logging.DEBUG)
@@ -91,10 +93,13 @@ def main():
             # Do not post the comment if we're already too late to the
             # party
             if time.time() - timestamp <= max_delay:
-                successful = ws.comment.post_comment(sid)
-                if successful:
-                    now = timestamp2print(time.time())
-                    print(f'{now}: posted comment to {url}')
+                if mercy:
+                    print(f'{now}: withheld comment due to --mercy')
+                else:
+                    successful = ws.comment.post_comment(sid)
+                    if successful:
+                        now = timestamp2print(time.time())
+                        print(f'{now}: posted comment to {url}')
         else:
             logger.debug(f'seen: {sid}')
 
