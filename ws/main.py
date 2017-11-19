@@ -31,6 +31,9 @@ def main():
                         transfer size savings, but you might be blocked after a
                         while, and status posting time granularity is limited
                         to one minute)''')
+    parser.add_argument('-n', '--no-salt-to-injury', action='store_true',
+                        help='''do not add salt to injury by replying to
+                        target user's first comment''')
     parser.add_argument('--mercy', action='store_true', help='leave sofa to the target user')
     parser.add_argument('-d', '--debug', action='store_true', help='print debugging info')
     parser.add_argument('uid', type=int, help='user id of the target user')
@@ -105,7 +108,8 @@ def main():
 
         # Try to reply to OP's first comment
         # The mobile scraper doesn't support this feature
-        if not mobile and time.time() <= new_status_timestamp + op_comment_max_delay:
+        if ((not args.no_salt_to_injury and not mobile and
+             time.time() <= new_status_timestamp + op_comment_max_delay)):
             comments = scraper.status_comments(sid)
             if comments is None:  # Failed to extract comments
                 continue
