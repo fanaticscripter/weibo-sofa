@@ -113,7 +113,7 @@ def main():
 
         # Try to reply to OP's first comment
         # The mobile scraper doesn't support this feature
-        if ((not args.no_salt_to_injury and not mobile and
+        if ((ws.conf.reply_text and not args.no_salt_to_injury and not mobile and
              time.time() <= new_status_timestamp + op_comment_max_delay)):
             comments = scraper.status_comments(sid)
             if comments is None:  # Failed to extract comments

@@ -27,6 +27,9 @@ SESSION.headers = {
 # sid is the status id; text is the content of the comment, defaulting
 # to comment.text in conf.ini.
 def post_comment(sid, text=DEFAULT_COMMENT):
+    if not text:
+        logger.warning('comment should not be empty')
+        return False
     url = 'https://api.weibo.com/2/comments/create.json'
     payload = {
         'access_token': ACCESS_TOKEN,
@@ -47,6 +50,9 @@ def post_comment(sid, text=DEFAULT_COMMENT):
 # sid is the status id, cid is the comment id, text is the content of
 # the reply, default to comment.reply_text in conf.ini.
 def reply_to_comment(sid, cid, text=DEFAULT_REPLY):
+    if not text:
+        logger.warning('reply to comment should not be empty')
+        return False
     url = 'https://api.weibo.com/2/comments/reply.json'
     payload = {
         'access_token': ACCESS_TOKEN,
