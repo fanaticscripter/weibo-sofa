@@ -20,7 +20,7 @@ from ws.logger import logger
 #            http://weibo.com/<status_id>/<hash>
 # 5th group: timestamp pattern (Javascript millisecond timstamp, 13
 #            digits till year 2286)
-EXTRACTOR = re.compile(r'ouid=(\d+)(.*?)mid=\\"(\d+)\\".*?href=\\"\\/\1\\/(\w+)\?.*?date=\\"(\d{13})\\"')
+EXTRACTOR = re.compile(r'ouid=(\d+)(.*?)mid=\\"(\d+)\\".*?href=\\"\\/\1\\/(\w+)\?.*?date=\\"(\d{13})\\"(.*?)class=\\"WB_feed_handle\\"')
 
 SESSION = requests.Session()
 SESSION.headers = {
@@ -51,22 +51,23 @@ def fetch(uid):
         return None
     return resp.text
 
-# Returns a list of quadruplets of three ints and a str:
-#   (ouid, status_id, status_timestamp, url)
+# Returns a list of tuple of three ints, a str, and a bool:
+#   (ouid, status_id, status_timestamp, url, repost)
 def parse(html):
     statuses = []
-    for ouid, filler, sid, basename, timestamp_ms in EXTRACTOR.findall(html):
+    for ouid, filler1, sid, basename, timestamp_ms, filler2 in EXTRACTOR.findall(html):
         # Skip pinned status
-        if r'feedtype=\"top\"' not in filler:
+        if r'feedtype=\"top\"' not in filler1:
             ouid = int(ouid)
             sid = int(sid)
             timestamp = int(timestamp_ms) // 1000
             url = f'http://weibo.com/{ouid}/{basename}'
-            statuses.append((ouid, sid, timestamp, url))
+            repost = r'\"WB_feed_expand\"' in filler2
+            statuses.append((ouid, sid, timestamp, url, repost))
     return statuses
 
-# Returns a triplet of two ints and a str:
-#   (status_id, status_timestamp, url)
+# Returns a tuple of two ints, a str, and a bool:
+#   (status_id, status_timestamp, url, repost)
 # or None if no original status is found.
 #
 # A warning is optionally issued when no original status is found. If
