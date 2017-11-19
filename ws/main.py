@@ -55,6 +55,7 @@ def main():
     import ws.db
 
     if mobile:
+        sys.exit('mobile scraper currently disabled due to feature imparity')
         import ws.scraper_mobile as scraper
     else:
         import ws.scraper as scraper
