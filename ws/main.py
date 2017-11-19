@@ -34,6 +34,8 @@ def main():
     parser.add_argument('-n', '--no-salt-to-injury', action='store_true',
                         help='''do not add salt to injury by replying to
                         target user's first comment''')
+    parser.add_argument('--skip-repost', action='store_true',
+                        help='do not grab the sofa if the status is a repost')
     parser.add_argument('--mercy', action='store_true', help='leave sofa to the target user')
     parser.add_argument('-d', '--debug', action='store_true', help='print debugging info')
     parser.add_argument('uid', type=int, help='user id of the target user')
@@ -81,7 +83,7 @@ def main():
         starting_time = time.time()
         latest = scraper.latest_status(uid)
         try:
-            sid, timestamp, url = latest
+            sid, timestamp, url, repost = latest
         except TypeError:
             # Got None
             continue
@@ -96,7 +98,9 @@ def main():
             # Do not post the comment if we're already too late to the
             # party
             if time.time() - timestamp <= max_delay:
-                if mercy:
+                if repost and args.skip_repost:
+                    print(f'{now}: did not comment on this repost due to --skip-repost')
+                elif mercy:
                     print(f'{now}: withheld comment due to --mercy')
                 else:
                     successful = ws.comment.post_comment(sid)
