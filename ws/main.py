@@ -25,6 +25,9 @@ def timestamp2print(timestamp, timefmt=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Grab target user\'s Weibo sofas.')
+    parser.add_argument('-t', '--retire-after', type=int, default=0,
+                        help='''automatically stop and quit after the
+                        specified number of minutes''')
     parser.add_argument('-m', '--mobile', action='store_true',
                         help='''scrape mobile site m.weibo.cn instead of
                         weibo.com (does not require cookies, provides huge
@@ -40,6 +43,7 @@ def main():
     parser.add_argument('-d', '--debug', action='store_true', help='print debugging info')
     parser.add_argument('uid', type=int, help='user id of the target user')
     args = parser.parse_args()
+    retire_after = args.retire_after
     uid = args.uid
     mobile = args.mobile
     mercy = args.mercy
@@ -71,17 +75,21 @@ def main():
 
     posting_time_fmt = '%Y-%m-%dT%H:%M%z' if mobile else None
 
-    starting_time = 0
+    starting_time = time.time()
+    last_poll = 0
     new_status_timestamp = 0  # Used when waiting for OP to post a comment
     while True:
-        # Sleep until polling_interval seconds after the starting time
-        # of the last request.
-        sleep_length = (starting_time + polling_interval) - time.time()
+        if retire_after > 0 and time.time() - starting_time >= retire_after * 60:
+            logger.info(f'retiring after {retire_after} minutes')
+            break
+
+        # Sleep until polling_interval seconds after the last poll.
+        sleep_length = (last_poll + polling_interval) - time.time()
         if sleep_length > 0:
             time.sleep(sleep_length)
 
         logger.debug('polling')
-        starting_time = time.time()
+        last_poll = time.time()
         latest = scraper.latest_status(uid)
         try:
             sid, timestamp, url, repost = latest

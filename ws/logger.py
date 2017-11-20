@@ -8,3 +8,4 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger('ws')
+logger.setLevel(logging.INFO)
