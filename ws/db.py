@@ -25,4 +25,4 @@ def insert_status(uid, sid, timestamp, url):
     _, created = Status.get_or_create(uid=uid, sid=sid, url=url, defaults={'timestamp': timestamp})
     return created
 
-db.create_table(Status, safe=True)
+db.create_tables([Status], safe=True)
