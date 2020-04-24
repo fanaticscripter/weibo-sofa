@@ -64,6 +64,9 @@ def main():
     else:
         import ws.scraper as scraper
 
+        if not ws.conf.cookies:
+            sys.exit('cookies not set; see https://github.com/fanaticscripter/weibo-sofa/wiki/Why-we-need-weibo.com-cookies-and-how-to-obtain-them')
+
     polling_interval = ws.conf.polling_interval
     max_delay = ws.conf.max_delay
     op_comment_max_delay = ws.conf.op_comment_max_delay

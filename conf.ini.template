@@ -23,9 +23,10 @@ text = 沙发
 # reply_text = 沙发
 
 [scraper]
-# weibo.com cookies, grabbed from browser so as to download weibo.com
-# pages rather than being redirected to the login screen; not required
-# if you use the mobile data source
+# weibo.com session cookies for scraping user profile.
+# Required for the default scraper.
+# See https://github.com/fanaticscripter/weibo-sofa/wiki/Why-we-need-weibo.com-cookies-and-how-to-obtain-them
+# if you're not sure how to populate this field.
 cookies =
 
 # Polling interval of the scraper, in seconds; defaults to 1
