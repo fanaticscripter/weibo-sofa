@@ -20,7 +20,7 @@ op_comment_max_delay = 300
 text = 沙发
 
 # Text of reply to post (to OP's comment); defaults to no reply
-# reply_text = 沙发
+#reply_text = 沙发
 
 [scraper]
 # weibo.com session cookies for scraping user profile.
